@@ -34,6 +34,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+        env:
+          TAG: v1.0.0  # Set this to the version you want to tag on success
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
@@ -42,6 +44,8 @@ jobs:
           echo test, and deploy your project.
           sleep 10s
 
-      - name: Set Deployment Status
-        id: deployment_status
-        run: echo "::set-output name=success::true"
+      - name: Tag successful deployment
+        run: |
+          git tag -a $TAG -m "Tagging successful deployment"
+          git push origin $TAG
+        if: success()
