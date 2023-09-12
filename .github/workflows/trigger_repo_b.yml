@@ -1,0 +1,26 @@
+name: Trigger Repo B on Build Success
+
+on:
+  workflow_run:
+    workflows: ["github-cross-repo-reployment-repo-a"]
+    types:
+      - completed
+
+jobs:
+  trigger_repo_b:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repo B
+      uses: actions/checkout@v2
+      with:
+        repository: durrello/github-cross-repo-reployment-repo-b  # Replace with the actual repository you want to trigger (Repo B).
+        ref: master  # Replace with the branch you want to trigger in Repo B.
+
+    - name: Trigger Repo B Workflow
+      run: |
+        curl -X POST -H "Authorization: token ${{ secrets.REPO_A_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/durrello/github-cross-repo-reployment-repo-b/actions/workflows/github-cross-repo-reployment-repo-b/dispatches \
+          -d '{"ref":"master"}'  # Replace with the branch you want to trigger in Repo B.
+
