@@ -25,6 +25,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Trigger Event
+        run: |
+          # You can create a file or perform any action here to represent the event.
+          # For example, creating a file named "event_trigger.txt"
+          echo "Event triggered" > event_trigger.txt
+
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
