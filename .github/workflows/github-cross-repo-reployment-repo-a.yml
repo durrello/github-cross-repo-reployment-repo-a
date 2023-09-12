@@ -40,6 +40,7 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+          sleep 10s
 
       - name: Set Deployment Status
         id: deployment_status
