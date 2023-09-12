@@ -1,59 +1,15 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI-github-cross-repo-reployment-repo-a
-
-# Controls when the workflow will run
+name: Deploy
 on:
-  # Triggers the workflow on push or pull request events but only for the "master" branch
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  push:
+    branches:
+      - master
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
+    name: Run API
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      - name: Trigger Event
+      - name: Build API
         run: |
-          # You can create a file or perform any action here to represent the event.
-          # For example, creating a file named "event_trigger.txt"
-          echo "Event triggered" > event_trigger.txt
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-        env:
-          TAG: v1.0.0  # Set this to the version you want to tag on success
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          echo "Build API"
           sleep 10s
-
-      # - name: Tag successful deployment
-      #   run: |
-      #     git tag -a $TAG -m "Tagging successful deployment"
-      #     git push origin $TAG
-      #     if: success()
-
-      - name: Trigger RepoB workflow
-        run: |
-         curl -X POST \
-           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-           -H "Accept: application/vnd.github.everest-preview+json" \
-           -d '{"event_type": "repo-a-deployment-tagged", "client_payload": {"tag": "v1.0.0"}}' \
-            https://api.github.com/durrello/github-cross-repo-reployment-repo-b/dispatches
