@@ -46,6 +46,8 @@ jobs:
 
       - name: Tag successful deployment
         run: |
+          # Replace 'v1.0.0' with the actual tag version you want to create
+          TAG=v1.0.0
           git tag -a $TAG -m "Tagging successful deployment"
           git push origin $TAG
-        if: success()
+          if: success()
