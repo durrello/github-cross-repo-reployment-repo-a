@@ -44,11 +44,11 @@ jobs:
           echo test, and deploy your project.
           sleep 10s
 
-      - name: Tag successful deployment
-        run: |
-          git tag -a $TAG -m "Tagging successful deployment"
-          git push origin $TAG
-          if: success()
+      # - name: Tag successful deployment
+      #   run: |
+      #     git tag -a $TAG -m "Tagging successful deployment"
+      #     git push origin $TAG
+      #     if: success()
 
       - name: Trigger RepoB workflow
         run: |
