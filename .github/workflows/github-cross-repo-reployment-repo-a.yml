@@ -44,10 +44,16 @@ jobs:
           echo test, and deploy your project.
           sleep 10s
 
-      # - name: Tag successful deployment
-      #   run: |
-      #     # Replace 'v1.0.0' with the actual tag version you want to create
-      #     TAG=v1.0.0
-      #     git tag -a $TAG -m "Tagging successful deployment"
-      #     git push origin $TAG
-      #     if: success()
+      - name: Tag successful deployment
+        run: |
+          git tag -a $TAG -m "Tagging successful deployment"
+          git push origin $TAG
+          if: success()
+
+      - name: Trigger RepoB workflow
+        run: |
+         curl -X POST \
+           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+           -H "Accept: application/vnd.github.everest-preview+json" \
+           -d '{"event_type": "repo-a-deployment-tagged", "client_payload": {"tag": "v1.0.0"}}' \
+            https://api.github.com/durrello/github-cross-repo-reployment-repo-b/dispatches
