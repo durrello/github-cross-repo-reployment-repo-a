@@ -23,8 +23,8 @@ jobs:
       run: |
         current_date=$(date +'%Y%m%d')
         
-        # Get the latest tag
-        latest_tag=$(git describe --tags --abbrev=0)
+        # Get the latest tag if it exists
+        latest_tag=$(git describe --tags --abbrev=0 || true)
         
         if [ -n "$latest_tag" ]; then
           # Extract the date and version parts
