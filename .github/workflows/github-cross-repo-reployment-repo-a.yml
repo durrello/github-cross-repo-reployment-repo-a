@@ -20,20 +20,21 @@ jobs:
 
     - name: Fetch current tags
       run: git fetch --tags
-
+    
     - name: Determine the next version number
       id: determine_version
       run: |
         current_date=$(date +'%Y%m%d')
-        current_tag=$(git tag --list "$current_tag.*" | sort -rV | head -n 1)
+        current_tag="prod$current_date.0"
         
-        if git rev-parse $current_tag >/dev/null 2>&1; then
-          last_version=$(git tag --list "$current_tag.*" | sort -rV | head -n 1)
+        last_version=$(git tag --list "$current_tag.*" | sort -rV | head -n 1)
+        
+        if [ -n "$last_version" ]; then
           last_version=${last_version##*.}
           next_version=$((last_version + 1))
           next_tag="prod$current_date.$next_version"
         else
-          next_tag="prod$current_date.0"
+          next_tag=$current_tag
         fi
         
         echo "Creating new tag $next_tag."
