@@ -17,17 +17,18 @@ jobs:
 
     - name: Git pull
       run: git pull --prune
+      env:
+        GITHUB_TOKEN: ${{ secrets._GITHUB_TOKEN }}
 
     - name: Determine the next version number
       id: determine_version
       run: |
         current_date=$(date +'%Y%m%d')
         
-        # Check if any tags exist in the repository
-        if git tag --list; then
-          # Get the latest tag if any exist
-          latest_tag=$(git describe --tags --abbrev=0)
-          
+        # Get the latest tag
+        latest_tag=$(git describe --tags --abbrev=0)
+        
+        if [ -n "$latest_tag" ]; then
           # Extract the date and version parts
           latest_date=$(echo $latest_tag | sed 's/^prod\([0-9]\{8\}\)\..*/\1/')
           latest_version=$(echo $latest_tag | sed 's/^prod[0-9]\{8\}\.\([0-9]\+\)/\1/')
