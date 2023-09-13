@@ -26,17 +26,21 @@ jobs:
       id: calculate_tag
       run: |
         current_date=$(date +'%Y%m%d')
-        current_tag="prod$current_date.0"
-        next_tag="prod$current_date.1"
+        tag_number=0
+        tag_found=false
         
-        if git rev-parse $current_tag >/dev/null 2>&1; then
-          echo "$current_tag already exists."
-          echo "Incrementing the tag to $next_tag."
-          echo "$next_tag" >> tag.txt
-        else
-          echo "Creating new tag $current_tag."
-          echo "$current_tag" >> tag.txt
-        fi
+        while [ "$tag_found" != "true" ]; do
+          current_tag="prod$current_date.$tag_number"
+          
+          if git rev-parse $current_tag >/dev/null 2>&1; then
+            echo "$current_tag already exists."
+            tag_number=$((tag_number + 1))
+          else
+            echo "Creating new tag $current_tag."
+            echo "$current_tag" >> tag.txt
+            tag_found=true
+          fi
+        done
       shell: bash
 
     - name: Read release tag
