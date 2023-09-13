@@ -23,10 +23,11 @@ jobs:
       run: |
         current_date=$(date +'%Y%m%d')
         
-        # Get the latest tag if it exists
-        latest_tag=$(git describe --tags --abbrev=0 || true)
-        
-        if [ -n "$latest_tag" ]; then
+        # Check if any tags exist in the repository
+        if git tag --list; then
+          # Get the latest tag if any exist
+          latest_tag=$(git describe --tags --abbrev=0)
+          
           # Extract the date and version parts
           latest_date=$(echo $latest_tag | sed 's/^prod\([0-9]\{8\}\)\..*/\1/')
           latest_version=$(echo $latest_tag | sed 's/^prod[0-9]\{8\}\.\([0-9]\+\)/\1/')
