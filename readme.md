@@ -4,6 +4,8 @@ This project walks through release deployment in Repo A https://github.com/durre
 ## Create the workflow files
 ### Repository A
 This is the source repository that is going to triger build in the second repository(Repository B)
+Repo A has two workflow files
 
 ### Repository B 
 This repo is triggered after Repository A has successfully built.
+
