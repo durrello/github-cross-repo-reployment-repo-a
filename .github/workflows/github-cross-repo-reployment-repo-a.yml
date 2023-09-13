@@ -13,3 +13,4 @@ jobs:
         run: |
           echo "Build API"
           sleep 10s
+          echo "Build Successful"
