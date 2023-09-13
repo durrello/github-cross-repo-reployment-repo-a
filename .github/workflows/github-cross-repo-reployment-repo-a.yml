@@ -18,6 +18,10 @@ jobs:
     - name: Git pull
       run: git pull --prune
 
+    - name: List existing tags
+      run: git tag -l
+      id: list_tags
+
     - name: Get the latest tag
       id: latest_tag
       run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
@@ -28,11 +32,12 @@ jobs:
         current_date=$(date +'%Y%m%d')
         tag_number=0
         tag_found=false
+        existing_tags="${{ steps.list_tags.outputs.stdout }}"
         
         while [ "$tag_found" != "true" ]; do
           current_tag="prod$current_date.$tag_number"
           
-          if git rev-parse $current_tag >/dev/null 2>&1; then
+          if echo "$existing_tags" | grep -q "$current_tag"; then
             echo "$current_tag already exists."
             tag_number=$((tag_number + 1))
           else
