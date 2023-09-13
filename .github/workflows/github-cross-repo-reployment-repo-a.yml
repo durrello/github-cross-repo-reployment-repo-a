@@ -20,7 +20,16 @@ jobs:
 
     - name: Calculate release tag
       id: calculate_tag
-      run: echo "prod$(date +'%Y%m%d').0" >> tag.txt
+      run: |
+        current_tag=$(git describe --tags --abbrev=0 2>/dev/null || true)
+        if [[ -z "$current_tag" ]]; then
+          echo "prod$(date +'%Y%m%d').0" >> tag.txt
+        else
+          # Extract the version number and increment it
+          version=$(echo "$current_tag" | grep -oE '[0-9]+')
+          next_version=$((version + 1))
+          echo "prod$(date +'%Y%m%d').$next_version" >> tag.txt
+        fi
       shell: bash
 
     - name: Read release tag
