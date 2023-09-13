@@ -37,8 +37,15 @@ jobs:
             tag_number=$((tag_number + 1))
           else
             echo "Creating new tag $current_tag."
-            echo "$current_tag" >> tag.txt
-            tag_found=true
+            git tag $current_tag
+            if git push origin $current_tag; then
+              echo "$current_tag pushed successfully."
+              echo "$current_tag" >> tag.txt
+              tag_found=true
+            else
+              echo "Pushing $current_tag failed. Retrying..."
+              tag_number=$((tag_number + 1))
+            fi
           fi
         done
       shell: bash
