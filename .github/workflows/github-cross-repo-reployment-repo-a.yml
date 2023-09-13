@@ -18,19 +18,28 @@ jobs:
     - name: Git pull
       run: git pull --prune
 
-    - name: Fetch current tags
-      run: git fetch --tags
-    
     - name: Determine the next version number
       id: determine_version
       run: |
         current_date=$(date +'%Y%m%d')
-        last_version=$(git describe --tags --abbrev=0 --match "prod$current_date.*" 2>/dev/null || true)
         
-        if [ -n "$last_version" ]; then
-          last_version=${last_version##*.}
-          next_version=$((last_version + 1))
-          next_tag="prod$current_date.$next_version"
+        # Get the latest tag
+        latest_tag=$(git describe --tags --abbrev=0)
+        
+        if [ -n "$latest_tag" ]; then
+          # Extract the date and version parts
+          latest_date=$(echo $latest_tag | sed 's/^prod\([0-9]\{8\}\)\..*/\1/')
+          latest_version=$(echo $latest_tag | sed 's/^prod[0-9]\{8\}\.\([0-9]\+\)/\1/')
+          
+          if [ "$latest_date" = "$current_date" ]; then
+            next_version=$((latest_version + 1))
+            next_tag="prod$current_date.$next_version"
+          elif [ "$latest_date" -lt "$current_date" ]; then
+            next_tag="prod$current_date.0"
+          else
+            echo "Invalid date condition."
+            exit 1
+          fi
         else
           next_tag="prod$current_date.0"
         fi
