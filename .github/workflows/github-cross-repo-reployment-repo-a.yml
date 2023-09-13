@@ -38,6 +38,5 @@ jobs:
         files: ''
         tag_name: ${{ steps.read_tag.outputs.tag }}
         title: Release ${{ steps.read_tag.outputs.tag }}
-        body: Generate release notes here
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets._GITHUB_TOKEN }}
