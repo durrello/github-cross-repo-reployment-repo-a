@@ -25,16 +25,14 @@ jobs:
       id: determine_version
       run: |
         current_date=$(date +'%Y%m%d')
-        current_tag="prod$current_date.0"
-        
-        last_version=$(git tag --list "$current_tag.*" | sort -rV | head -n 1)
+        last_version=$(git describe --tags --abbrev=0 --match "prod$current_date.*" 2>/dev/null || true)
         
         if [ -n "$last_version" ]; then
           last_version=${last_version##*.}
           next_version=$((last_version + 1))
           next_tag="prod$current_date.$next_version"
         else
-          next_tag=$current_tag
+          next_tag="prod$current_date.0"
         fi
         
         echo "Creating new tag $next_tag."
