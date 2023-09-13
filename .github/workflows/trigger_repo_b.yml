@@ -2,7 +2,7 @@ name: Trigger Repo B on Build Success
 
 on:
   workflow_run:
-    workflows: ["github-cross-repo-reployment-repo-a"]
+    workflows: ["Deploy"]
     types:
       - completed
 
