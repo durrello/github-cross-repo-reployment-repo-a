@@ -18,18 +18,26 @@ jobs:
     - name: Git pull
       run: git pull --prune
 
-    - name: Fetch tags from the remote
+    - name: Fetch current tags
       run: git fetch --tags
 
-    - name: Calculate release tag
-      id: calculate_tag
+    - name: Determine the next version number
+      id: determine_version
       run: |
-        tag=$(date +'%Y%m%d')
-        patch=0
-        while [[ $(git tag -l | grep "prod$tag.$patch") ]]; do
-          patch=$((patch+1))
-        done
-        echo "prod$tag.$patch" >> tag.txt
+        current_date=$(date +'%Y%m%d')
+        current_tag="prod$current_date.0"
+        
+        if git rev-parse $current_tag >/dev/null 2>&1; then
+          last_version=$(git tag --list "$current_tag.*" | sort -rV | head -n 1)
+          last_version=${last_version##*.}
+          next_version=$((last_version + 1))
+          next_tag="prod$current_date.$next_version"
+        else
+          next_tag=$current_tag
+        fi
+        
+        echo "Creating new tag $next_tag."
+        echo "$next_tag" >> tag.txt
       shell: bash
 
     - name: Read release tag
