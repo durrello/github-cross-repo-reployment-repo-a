@@ -1,16 +1,43 @@
-name: Deploy
+name: Create Release
+
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
+
 jobs:
-  build:
-    name: Run API
+  release:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Build API
-        run: |
-          echo "Build API"
-          sleep 10s
-          echo "Build Successful"
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Git pull
+      run: git pull --prune
+
+    - name: Calculate release tag
+      id: calculate_tag
+      run: echo "prod$(date +'%Y%m%d').0" >> tag.txt
+      shell: bash
+
+    - name: Read release tag
+      id: read_tag
+      run: echo "::set-output name=tag::$(cat tag.txt)"
+      shell: bash
+
+    - name: Create and push release tag
+      run: |
+        git tag ${{ steps.read_tag.outputs.tag }}
+        git push --tags
+      if: steps.read_tag.outputs.tag != ''
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ''
+        tag_name: ${{ steps.read_tag.outputs.tag }}
+        title: Release ${{ steps.read_tag.outputs.tag }}
+        body: Generate release notes here
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
