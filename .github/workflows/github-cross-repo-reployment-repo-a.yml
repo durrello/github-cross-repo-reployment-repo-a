@@ -18,15 +18,23 @@ jobs:
     - name: Git pull
       run: git pull --prune
 
+    - name: Get the latest tag
+      id: latest_tag
+      run: echo "::set-output name=tag::$(git describe --tags --abbrev=0)"
+
     - name: Calculate release tag
       id: calculate_tag
       run: |
-        current_tag=$(git describe --tags --abbrev=0 2>/dev/null || true)
+        current_tag="${{ steps.latest_tag.outputs.tag }}"
         if [[ -z "$current_tag" ]]; then
           echo "prod$(date +'%Y%m%d').0" >> tag.txt
         else
-          # Extract the version number and increment it
-          version=$(echo "$current_tag" | grep -oE '[0-9]+')
+          # Extract the version number
+          version=$(echo "$current_tag" | sed -E 's/prod[0-9]+([.][0-9]+)?/\1/g')
+          if [[ -z "$version" ]]; then
+            version="0"
+          fi
+          # Increment the version number
           next_version=$((version + 1))
           echo "prod$(date +'%Y%m%d').$next_version" >> tag.txt
         fi
