@@ -17,9 +17,17 @@ jobs:
 
     - name: Git pull
       run: git pull --prune
-      env:
-        GITHUB_TOKEN: ${{ secrets._GITHUB_TOKEN }}
 
+    - name: Fetch all tags
+      run: git fetch --tags
+
+    - name: Get the latest tag
+      id: latest_tag
+      run: |
+        latest_tag=$(git describe --tags --abbrev=0)
+        echo "::set-output name=latest_tag::$latest_tag"
+      shell: bash
+      
     - name: Determine the next version number
       id: determine_version
       run: |
